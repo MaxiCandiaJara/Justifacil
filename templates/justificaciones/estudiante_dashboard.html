@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Inicio Estudiante{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h5">Mis Justificaciones</h2>
+  <a href="{% url 'justificacion_create' %}" class="btn btn-primary">Nueva Justificación</a>
+</div>
+{% include 'justificaciones/partials/tabla_justificaciones.html' with justificaciones=justificaciones %}
+{% endblock %}

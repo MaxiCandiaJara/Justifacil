@@ -1,0 +1,41 @@
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fechas</th>
+        <th>Motivo</th>
+        <th>Estado</th>
+        <th>Fuente</th>
+        <th>Creada</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for j in justificaciones %}
+        <tr>
+          <td>{{ j.id }}</td>
+          <td>
+            {{ j.fecha_inicio|date:'d/m/Y' }}
+            {% if j.fecha_fin %} - {{ j.fecha_fin|date:'d/m/Y' }}{% endif %}
+          </td>
+          <td>{{ j.motivo|truncatechars:40 }}</td>
+          <td>
+            {% if j.estado == 'PENDIENTE' %}
+              <span class="badge text-bg-warning">Pendiente</span>
+            {% elif j.estado == 'APROBADA' %}
+              <span class="badge text-bg-success">Aprobada</span>
+            {% else %}
+              <span class="badge text-bg-danger">Rechazada</span>
+            {% endif %}
+          </td>
+          <td><span class="badge text-bg-secondary">{{ j.fuente }}</span></td>
+          <td>{{ j.created_at|date:'d/m/Y H:i' }}</td>
+          <td><a href="{% url 'justificacion_detail' j.id %}" class="btn btn-sm btn-outline-primary">Ver</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="text-center text-muted">Sin registros</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

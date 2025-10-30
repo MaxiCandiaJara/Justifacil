@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Revisiones{% endblock %}
+{% block content %}
+<h2 class="h5 mb-3">Pendientes de Revisión</h2>
+{% include 'justificaciones/partials/tabla_justificaciones.html' with justificaciones=pendientes %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Justificación{% endblock %}
+{% block content %}
+<h2 class="h5 mb-3">Justificación #{{ justificacion.id }}</h2>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">Estudiante</dt><dd class="col-sm-9">{{ justificacion.estudiante.get_full_name|default:justificacion.estudiante.username }}</dd>
+      <dt class="col-sm-3">Fechas</dt><dd class="col-sm-9">{{ justificacion.fecha_inicio|date:'d/m/Y' }}{% if justificacion.fecha_fin %} - {{ justificacion.fecha_fin|date:'d/m/Y' }}{% endif %}</dd>
+      <dt class="col-sm-3">Motivo</dt><dd class="col-sm-9">{{ justificacion.motivo }}</dd>
+      <dt class="col-sm-3">Descripción</dt><dd class="col-sm-9">{{ justificacion.descripcion|linebreaks }}</dd>
+      <dt class="col-sm-3">Estado</dt><dd class="col-sm-9"><strong>{{ justificacion.get_estado_display }}</strong></dd>
+      <dt class="col-sm-3">Comentarios</dt><dd class="col-sm-9">{{ justificacion.comentarios_coordinador|default:'—' }}</dd>
+      <dt class="col-sm-3">Fuente</dt><dd class="col-sm-9">{{ justificacion.fuente }}</dd>
+    </dl>
+
+    <h6 class="mt-3">Documentos</h6>
+    <ul>
+      {% for d in justificacion.documentos.all %}
+        <li><a href="{{ d.archivo.url }}" target="_blank">Descargar</a> — {% if d.legible %}<span class="text-success">Legible</span>{% else %}<span class="text-warning">Pendiente</span>{% endif %}</li>
+      {% empty %}
+        <li class="text-muted">Sin documentos</li>
+      {% endfor %}
+    </ul>
+
+    {% if user.rol == 'COORDINADOR' and justificacion.estado == 'PENDIENTE' %}
+      <div class="mt-4 d-flex gap-2">
+        <form method="post" action="{% url 'coordinador_aprobar' justificacion.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="comentarios_coordinador" value="Aprobado" />
+          <button class="btn btn-success">Aprobar</button>
+        </form>
+        <form method="post" action="{% url 'coordinador_rechazar' justificacion.id %}">
+          {% csrf_token %}
+          <input type="text" class="form-control" name="comentarios_coordinador" placeholder="Motivo del rechazo" />
+          <button class="btn btn-danger">Rechazar</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
