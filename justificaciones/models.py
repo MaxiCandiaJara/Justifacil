@@ -2,6 +2,7 @@ from __future__ import annotations
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.core.validators import FileExtensionValidator
 
 
 class Justificacion(models.Model):
@@ -27,7 +28,7 @@ class Justificacion(models.Model):
 
 class Documento(models.Model):
     justificacion = models.ForeignKey(Justificacion, on_delete=models.CASCADE, related_name="documentos")
-    archivo = models.FileField(upload_to="documentos/")
+    archivo = models.FileField(upload_to="documentos/", validators=[FileExtensionValidator(allowed_extensions=['pdf', 'png'])])
     legible = models.BooleanField(default=False)
     validado_en = models.DateTimeField(blank=True, null=True)
 
