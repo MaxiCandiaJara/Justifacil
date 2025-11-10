@@ -58,6 +58,13 @@ def justificacion_create(request: HttpRequest) -> HttpResponse:
                 documento.validar_legibilidad()
             messages.success(request, "Justificación enviada correctamente.")
             return redirect("justificacion_detail", pk=justi.pk)
+        else:
+            # Mensaje de error
+            messages.error(
+                request,
+                "Ocurrió un error al enviar la justificación. "
+                "Por favor revisa los campos del formulario e inténtalo nuevamente."
+            )
     else:
         form = JustificacionForm()
         doc_form = DocumentoForm()
