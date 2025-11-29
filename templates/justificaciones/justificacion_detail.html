@@ -1,41 +1,182 @@
 {% extends 'base.html' %}
 {% block title %}Detalle Justificación{% endblock %}
-{% block content %}
-<h2 class="h5 mb-3">Justificación #{{ justificacion.id }}</h2>
-<div class="card shadow-sm">
-  <div class="card-body">
-    <dl class="row">
-      <dt class="col-sm-3">Estudiante</dt><dd class="col-sm-9">{{ justificacion.estudiante.get_full_name|default:justificacion.estudiante.username }}</dd>
-      <dt class="col-sm-3">Fechas</dt><dd class="col-sm-9">{{ justificacion.fecha_inicio|date:'d/m/Y' }}{% if justificacion.fecha_fin %} - {{ justificacion.fecha_fin|date:'d/m/Y' }}{% endif %}</dd>
-      <dt class="col-sm-3">Motivo</dt><dd class="col-sm-9">{{ justificacion.motivo }}</dd>
-      <dt class="col-sm-3">Descripción</dt><dd class="col-sm-9">{{ justificacion.descripcion|linebreaks }}</dd>
-      <dt class="col-sm-3">Estado</dt><dd class="col-sm-9"><strong>{{ justificacion.get_estado_display }}</strong></dd>
-      <dt class="col-sm-3">Comentarios</dt><dd class="col-sm-9">{{ justificacion.comentarios_coordinador|default:'—' }}</dd>
-      <dt class="col-sm-3">Fuente</dt><dd class="col-sm-9">{{ justificacion.fuente }}</dd>
-    </dl>
 
-    <h6 class="mt-3">Documentos</h6>
-    <ul>
-      {% for d in justificacion.documentos.all %}
-        <li><a href="{{ d.archivo.url }}" target="_blank">Descargar</a> — {% if d.legible %}<span class="text-success">Legible</span>{% else %}<span class="text-warning">Pendiente</span>{% endif %}</li>
-      {% empty %}
-        <li class="text-muted">Sin documentos</li>
-      {% endfor %}
-    </ul>
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h2 class="h4 fw-bold mb-0">Justificación #{{ justificacion.id }}</h2>
+      <a href="{% url 'justificacion_list' %}" class="btn btn-outline-secondary btn-sm hover-scale">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Volver
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4 hover-shadow">
+      <div class="card-header bg-white border-bottom py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted small text-uppercase fw-bold">Información General</span>
+          {% if justificacion.estado == 'PENDIENTE' %}
+          <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-medium">Pendiente</span>
+          {% elif justificacion.estado == 'APROBADA' %}
+          <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-medium">Aprobada</span>
+          {% else %}
+          <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-medium">Rechazada</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Estudiante</label>
+            <p class="fw-medium mb-0">
+              {{ justificacion.estudiante.get_full_name}}</p>
+          </div>
+          <div class="col-md-6">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Fechas</label>
+            <p class="fw-medium mb-0">
+              {{ justificacion.fecha_inicio|date:'d M, Y' }}
+              {% if justificacion.fecha_fin %} - {{ justificacion.fecha_fin|date:'d M, Y' }}{% endif %}
+            </p>
+          </div>
+          <div class="col-12">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Motivo</label>
+            <p class="fw-medium mb-0">{{ justificacion.motivo }}</p>
+          </div>
+          <div class="col-12">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Descripción</label>
+            <div class="bg-light p-3 rounded-3">
+              {{ justificacion.descripcion|linebreaks }}
+            </div>
+          </div>
+          {% if justificacion.comentarios_coordinador %}
+          <div class="col-12">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Comentarios del Coordinador</label>
+            <div class="bg-light p-3 rounded-3 border-start border-4 border-primary">
+              {{ justificacion.comentarios_coordinador }}
+            </div>
+          </div>
+          {% endif %}
+          <div class="col-md-6">
+            <label class="text-muted small fw-bold text-uppercase mb-1">Fuente</label>
+            <p class="fw-medium mb-0">{{ justificacion.fuente }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4 hover-shadow">
+      <div class="card-header bg-white border-bottom py-3">
+        <span class="text-muted small text-uppercase fw-bold">Documentos Adjuntos</span>
+      </div>
+      <div class="card-body p-4">
+        {% if justificacion.documentos.all %}
+        <div class="list-group list-group-flush">
+          {% for d in justificacion.documentos.all %}
+          <div
+            class="list-group-item px-0 d-flex justify-content-between align-items-center hover-bg-light rounded p-2 transition-all">
+            <div class="d-flex align-items-center">
+              <div class="bg-light p-2 rounded me-3 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <div>
+                <a href="{{ d.archivo.url }}" target="_blank"
+                  class="text-decoration-none fw-medium text-dark stretched-link">Documento {{ forloop.counter }}</a>
+                <div class="small text-muted">
+                  {% if d.legible %}
+                  <span class="text-success d-flex align-items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg"
+                      width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Legible</span>
+                  {% else %}
+                  <span class="text-warning d-flex align-items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg"
+                      width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg> Pendiente de revisión</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+            class="mb-2 opacity-50">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          <p class="mb-0 small">No hay documentos adjuntos</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
 
     {% if user.rol == 'COORDINADOR' and justificacion.estado == 'PENDIENTE' %}
-      <div class="mt-4 d-flex gap-2">
-        <form method="post" action="{% url 'coordinador_aprobar' justificacion.id %}">
-          {% csrf_token %}
-          <input type="hidden" name="comentarios_coordinador" value="Aprobado" />
-          <button class="btn btn-success">Aprobar</button>
-        </form>
-        <form method="post" action="{% url 'coordinador_rechazar' justificacion.id %}">
-          {% csrf_token %}
-          <input type="text" class="form-control" name="comentarios_coordinador" placeholder="Motivo del rechazo" />
-          <button class="btn btn-danger">Rechazar</button>
-        </form>
+    <div class="card border-0 shadow-sm border-top border-4 border-primary hover-shadow">
+      <div class="card-body p-4">
+        <h5 class="card-title mb-4">Acciones de Coordinación</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <form method="post" action="{% url 'coordinador_aprobar' justificacion.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="comentarios_coordinador" value="Aprobado" />
+              <button
+                class="btn btn-success w-100 py-2 d-flex align-items-center justify-content-center gap-2 hover-scale">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Aprobar Justificación
+              </button>
+            </form>
+          </div>
+          <div class="col-md-6">
+            <form method="post" action="{% url 'coordinador_rechazar' justificacion.id %}"
+              class="d-flex flex-column gap-2">
+              {% csrf_token %}
+              <div class="input-group">
+                <input type="text" class="form-control" name="comentarios_coordinador" placeholder="Motivo del rechazo"
+                  required />
+                <button class="btn btn-danger d-flex align-items-center gap-2 hover-scale">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                  Rechazar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
+    </div>
     {% endif %}
   </div>
 </div>
