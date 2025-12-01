@@ -33,9 +33,16 @@ python manage.py createsuperuser
 4. Ejecutar el servidor de desarrollo:
 ```
 python manage.py runserver
-```
+``` 
 
 Después de esto la app estará disponible en http://127.0.0.1:8000/ y el panel de admin en http://127.0.0.1:8000/admin/ (si creaste un superusuario).
+
+## Test unitarios
+
+Para realizar los test se deben instalar dependencias
+```
+pip install pytest pytest-django pytest-cov
+```
 
 ## Notas
 
