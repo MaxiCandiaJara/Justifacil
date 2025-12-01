@@ -28,7 +28,11 @@ class Justificacion(models.Model):
 
 class Documento(models.Model):
     justificacion = models.ForeignKey(Justificacion, on_delete=models.CASCADE, related_name="documentos")
-    archivo = models.FileField(upload_to="documentos/", validators=[FileExtensionValidator(allowed_extensions=['pdf', 'png'])])
+    # Django usará DEFAULT_FILE_STORAGE de settings.py automáticamente
+    archivo = models.FileField(
+        upload_to="documentos/",
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'png'])]
+    )
     legible = models.BooleanField(default=False)
     validado_en = models.DateTimeField(blank=True, null=True)
 

@@ -84,6 +84,15 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Supabase Storage Configuration
+SUPABASE_URL = "https://brpecxrwoasnqcaamath.supabase.co"
+SUPABASE_KEY = "sb_publishable_9O5JUmFK3e3bfRRekAeg2g_sMWOuLWy"
+SUPABASE_BUCKET = "Documentos"
+
+# Use Supabase Storage as default file storage (REST API version)
+DEFAULT_FILE_STORAGE = "justificaciones.storage_rest.SupabaseStorageREST"
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.Usuario"
